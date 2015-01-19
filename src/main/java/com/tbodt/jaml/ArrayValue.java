@@ -44,9 +44,4 @@ public final class ArrayValue extends JamlValue {
     public List<JamlValue> getElements() {
         return Collections.unmodifiableList(elements);
     }
-
-    @Override
-    void accept(JamlVisitor visitor) {
-        visitor.visitArray(this);
-    }
 }

@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.tbodt.jaml.parse;
+package com.tbodt.jaml;
 
-import com.tbodt.jaml.*;
+import com.tbodt.jaml.parse.JamlBaseVisitor;
+import com.tbodt.jaml.parse.JamlParser;
 import java.util.ArrayList;
 import java.util.List;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  * A visitor for parsing JAML with ANTLR.
@@ -36,15 +38,18 @@ public final class JamlParseVisitor extends JamlBaseVisitor<Object> {
 
     @Override
     public Object visitArray(JamlParser.ArrayContext ctx) {
-        List<JamlParser.ValueContext> valueContexts = ctx.value();
-        List<JamlValue> values = new ArrayList(valueContexts.size());
-        for (JamlParser.ValueContext valueContext : valueContexts)
-            values.add((JamlValue) visit(valueContext));
-        return new ArrayValue(values);
+        return new ArrayValue(visitEach(ctx.value()));
     }
 
     @Override
     public Object visitMap(JamlParser.MapContext ctx) {
-        return super.visitMap(ctx);
+        List<StringValue> keys = visitEach(ctx.VALUE());
+    }
+
+    private <T extends JamlValue> List<T> visitEach(List<? extends ParseTree> ctxs) {
+        List<T> values = new ArrayList(ctxs.size());
+        for (ParseTree ctx : ctxs)
+            values.add((T) visit(ctx));
+        return values;
     }
 }

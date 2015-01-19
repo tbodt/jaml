@@ -22,5 +22,4 @@ package com.tbodt.jaml;
  * @author Theodore Dubois
  */
 public abstract class JamlValue {
-    abstract void accept(JamlVisitor visitor);
 }

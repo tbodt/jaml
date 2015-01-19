@@ -40,9 +40,4 @@ public final class StringValue extends JamlValue {
     public String getValue() {
         return value;
     }
-    
-    @Override
-    void accept(JamlVisitor visitor) {
-        visitor.visitString(this);
-    }
 }

@@ -34,9 +34,4 @@ public final class MapValue extends JamlValue {
     public Map<StringValue, JamlValue> getMap() {
         return Collections.unmodifiableMap(map);
     }
-    
-    @Override
-    void accept(JamlVisitor visitor) {
-        visitor.visitMap(this);
-    }
 }
