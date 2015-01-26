@@ -35,27 +35,28 @@ public final class Jaml {
      * @param jaml the JAML string
      * @return a {@link JamlObject} with the appropriate contents
      */
-    public JamlValue parse(String jaml) {
+    public static JamlObject parse(String jaml) {
         return parse(new ANTLRInputStream(jaml));
     }
 
     /**
      * Parse the JAML from the reader and return a {@link JamlObject}.
      *
-     * @param jaml a reader for JAML
+     * @param reader a reader for JAML
      * @return a {@link JamlObject} with the appropriate contents
+     * @throws java.io.IOException if an I/O error occurs while reading from the {@code reader}
      */
-    public JamlValue parse(Reader jaml) throws IOException {
-        return parse(new ANTLRInputStream(jaml));
+    public static JamlObject parse(Reader reader) throws IOException {
+        return parse(new ANTLRInputStream(reader));
     }
 
-    private JamlValue parse(CharStream input) {
+    private static JamlObject parse(CharStream input) {
         JamlLexer lexer = new JamlLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         JamlParser parser = new JamlParser(tokens);
         ParseTree tree = parser.file();
         JamlParseVisitor visitor = new JamlParseVisitor();
-        return (JamlValue) visitor.visit(tree);
+        return visitor.visit(tree);
     }
 
     private Jaml() {

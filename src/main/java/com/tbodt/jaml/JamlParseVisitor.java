@@ -18,38 +18,42 @@ package com.tbodt.jaml;
 
 import com.tbodt.jaml.parse.JamlBaseVisitor;
 import com.tbodt.jaml.parse.JamlParser;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.antlr.v4.runtime.tree.ParseTree;
+import java.util.Map;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
  * A visitor for parsing JAML with ANTLR.
  *
  * @author Theodore Dubois
  */
-public final class JamlParseVisitor extends JamlBaseVisitor<Object> {
+public final class JamlParseVisitor extends JamlBaseVisitor<JamlObject> {
     @Override
-    public Object visitString(JamlParser.StringContext ctx) {
+    public JamlObject visitString(JamlParser.StringContext ctx) {
         String valueText = ctx.VALUE().getText();
         if (valueText.startsWith("\"") && valueText.endsWith("\""))
             valueText = valueText.substring(1, valueText.length() - 1);
-        return new StringValue(valueText);
+        return new JamlString(valueText);
     }
 
     @Override
-    public Object visitArray(JamlParser.ArrayContext ctx) {
-        return new ArrayValue(visitEach(ctx.value()));
+    public JamlObject visitMap(JamlParser.MapContext ctx) {
+        List<TerminalNode> keys = ctx.VALUE();
+        List<JamlParser.ValueContext> values = ctx.value();
+        Map<String, JamlObject> map = new HashMap<String, JamlObject>();
+        for (int i = 0; i < keys.size(); i++) {
+            String key = removeQuotes(keys.get(i).getText());
+            JamlObject value = visit(values.get(i));
+            map.put(key, value);
+        }
+        return new JamlMap(map);
     }
-
-    @Override
-    public Object visitMap(JamlParser.MapContext ctx) {
-        List<StringValue> keys = visitEach(ctx.VALUE());
-    }
-
-    private <T extends JamlValue> List<T> visitEach(List<? extends ParseTree> ctxs) {
-        List<T> values = new ArrayList(ctxs.size());
-        for (ParseTree ctx : ctxs)
-            values.add((T) visit(ctx));
-        return values;
+    
+    private static String removeQuotes(String string) {
+        if (string.startsWith("\"") && string.endsWith("\""))
+            return string.substring(1, string.length() - 1);
+        else
+            return string;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Theodore Dubois
+ * Copyright (C) 2015 theodore
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,20 @@
  */
 package com.tbodt.jaml;
 
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 /**
- * A JAML value (string, map, array).
  *
- * @author Theodore Dubois
+ * @author theodore
  */
-public abstract class JamlValue {
+public class JamlTest {
+    private static final String testJaml = "a = b";
+    
+    @Test
+    public void testJaml() {
+        JamlObject jaml = Jaml.parse(testJaml);
+        
+        assertTrue(true);
+    }
 }

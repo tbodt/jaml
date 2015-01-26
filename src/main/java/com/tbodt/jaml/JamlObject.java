@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Theodore Dubois
+ * Copyright (C) 2014 Theodore Dubois
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,32 +16,10 @@
  */
 package com.tbodt.jaml;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
- * A JAML array value. Has multiple child {@link JamlValue}s.
+ * A JAML value (map, string).
  *
  * @author Theodore Dubois
  */
-public final class ArrayValue extends JamlValue {
-    private final List<JamlValue> elements;
-
-    /**
-     * Construct an {@code ArrayValue} from the elements.
-     *
-     * @param elements the element
-     */
-    public ArrayValue(List<JamlValue> elements) {
-        this.elements = Collections.unmodifiableList(elements);
-    }
-
-    /**
-     * Return a list of the children.
-     *
-     * @return a list of the children
-     */
-    public List<JamlValue> getElements() {
-        return Collections.unmodifiableList(elements);
-    }
+public abstract class JamlObject {
 }

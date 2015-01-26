@@ -16,22 +16,28 @@
  */
 package com.tbodt.jaml;
 
-import java.util.Collections;
-import java.util.Map;
-
 /**
- * A JAML map value.
+ * A JAML string value.
  *
  * @author Theodore Dubois
  */
-public final class MapValue extends JamlValue {
-    private final Map<StringValue, JamlValue> map;
+public final class JamlString extends JamlObject {
+    private final String value;
 
-    public MapValue(Map<StringValue, JamlValue> map) {
-        this.map = Collections.unmodifiableMap(map);
+    /**
+     * Construct a {@code JamlString} with the given value..
+     *
+     * @param value the value
+     */
+    public JamlString(String value) {
+        this.value = value;
     }
 
-    public Map<StringValue, JamlValue> getMap() {
-        return Collections.unmodifiableMap(map);
+    /**
+     * Return the value.
+     * @return the value
+     */
+    public String getValue() {
+        return value;
     }
 }
