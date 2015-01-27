@@ -16,21 +16,26 @@
  */
 package com.tbodt.jaml;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import java.util.List;
 
 /**
- * A test for JAML.
+ * An exception thrown when the syntax of a JAML file is incorrect.
  *
- * @author theodore
+ * @author Theodore Dubois
  */
-public class JamlTest {
-    private static final String testJaml = "a = b";
+public class JamlSyntaxException extends Exception {
+    private final List<String> errors;
 
-    @Test
-    public void testJaml() throws JamlSyntaxException {
-        JamlObject jaml = Jaml.parse(testJaml);
+    JamlSyntaxException(List<String> errors) {
+        super(errors.toString());
+        this.errors = errors;
+    }
 
-        assertTrue(true);
+    /**
+     * Return a list of the error messages.
+     * @return a list of the error messages
+     */
+    public List<String> getErrors() {
+        return errors;
     }
 }

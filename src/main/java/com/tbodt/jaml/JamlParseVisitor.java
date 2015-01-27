@@ -16,8 +16,6 @@
  */
 package com.tbodt.jaml;
 
-import com.tbodt.jaml.parse.JamlBaseVisitor;
-import com.tbodt.jaml.parse.JamlParser;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +28,12 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  */
 public final class JamlParseVisitor extends JamlBaseVisitor<JamlObject> {
     @Override
-    public JamlObject visitString(JamlParser.StringContext ctx) {
-        String valueText = ctx.VALUE().getText();
-        if (valueText.startsWith("\"") && valueText.endsWith("\""))
-            valueText = valueText.substring(1, valueText.length() - 1);
-        return new JamlString(valueText);
+    public JamlObject visitFile(JamlParser.FileContext ctx) {
+        return visit(ctx.mappings());
     }
 
     @Override
-    public JamlObject visitMap(JamlParser.MapContext ctx) {
+    public JamlObject visitMappings(JamlParser.MappingsContext ctx) {
         List<TerminalNode> keys = ctx.VALUE();
         List<JamlParser.ValueContext> values = ctx.value();
         Map<String, JamlObject> map = new HashMap<String, JamlObject>();
@@ -49,7 +44,20 @@ public final class JamlParseVisitor extends JamlBaseVisitor<JamlObject> {
         }
         return new JamlMap(map);
     }
-    
+
+    @Override
+    public JamlObject visitString(JamlParser.StringContext ctx) {
+        String valueText = ctx.VALUE().getText();
+        if (valueText.startsWith("\"") && valueText.endsWith("\""))
+            valueText = valueText.substring(1, valueText.length() - 1);
+        return new JamlString(valueText);
+    }
+
+    @Override
+    public JamlObject visitMap(JamlParser.MapContext ctx) {
+        return visit(ctx.mappings());
+    }
+
     private static String removeQuotes(String string) {
         if (string.startsWith("\"") && string.endsWith("\""))
             return string.substring(1, string.length() - 1);

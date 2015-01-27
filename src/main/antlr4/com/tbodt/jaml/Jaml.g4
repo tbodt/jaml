@@ -6,11 +6,12 @@
 
 grammar Jaml;
 
-file: value EOF;
+file: mappings EOF;
 
-value: VALUE                                # String
-     | '{' (NL* VALUE '=' value)* NL* '}'   # Map
-     | '[' (NL* value)* NL* ']'             # Array
+mappings: (NL* VALUE '=' value)* NL*;
+
+value: VALUE              # String
+     | '{' mappings '}'   # Map
      ;
 
 VALUE: ID | STRING;

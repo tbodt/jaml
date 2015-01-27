@@ -16,10 +16,12 @@
  */
 package com.tbodt.jaml;
 
-import com.tbodt.jaml.parse.JamlLexer;
-import com.tbodt.jaml.parse.JamlParser;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -34,8 +36,9 @@ public final class Jaml {
      *
      * @param jaml the JAML string
      * @return a {@link JamlObject} with the appropriate contents
+     * @throws JamlSyntaxException if the JAML syntax is invalid
      */
-    public static JamlObject parse(String jaml) {
+    public static JamlObject parse(String jaml) throws JamlSyntaxException {
         return parse(new ANTLRInputStream(jaml));
     }
 
@@ -44,19 +47,46 @@ public final class Jaml {
      *
      * @param reader a reader for JAML
      * @return a {@link JamlObject} with the appropriate contents
-     * @throws java.io.IOException if an I/O error occurs while reading from the {@code reader}
+     * @throws java.io.IOException if an I/O error occurs while reading from the
+     * {@code reader}
+     * @throws JamlSyntaxException if the JAML syntax is invalid
      */
-    public static JamlObject parse(Reader reader) throws IOException {
+    public static JamlObject parse(Reader reader) throws IOException, JamlSyntaxException {
         return parse(new ANTLRInputStream(reader));
     }
 
-    private static JamlObject parse(CharStream input) {
+    private static JamlObject parse(CharStream input) throws JamlSyntaxException {
         JamlLexer lexer = new JamlLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         JamlParser parser = new JamlParser(tokens);
+
+        final List<String> errors = new ArrayList<String>();
+        ANTLRErrorListener listener = new BaseErrorListener() {
+            @Override
+            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+                errors.add(msg);
+            }
+        };
+        parser.addErrorListener(listener);
+        lexer.addErrorListener(listener);
+
         ParseTree tree = parser.file();
+        if (!errors.isEmpty())
+            throw new JamlSyntaxException(errors);
+
         JamlParseVisitor visitor = new JamlParseVisitor();
         return visitor.visit(tree);
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String line;
+        while ((line = br.readLine()) != null)
+            try {
+                System.out.println(parse(line));
+            } catch (JamlSyntaxException ex) {
+                ex.printStackTrace();
+            }
     }
 
     private Jaml() {
