@@ -29,7 +29,7 @@ public class JamlTest {
 
     @Test
     public void testJaml() throws JamlSyntaxException {
-        JamlObject jaml = Jaml.parse(testJaml);
+        JamlFile jaml = JamlFile.parse(testJaml);
 
         assertTrue(true);
     }
