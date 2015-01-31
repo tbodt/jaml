@@ -25,12 +25,18 @@ import org.junit.Test;
  * @author theodore
  */
 public class JamlTest {
-    private static final String testJaml = "a = b";
+    @Test
+    public void testStrings() throws JamlSyntaxException {
+        JamlFile jaml = JamlFile.parse("a = b");
+        assertEquals("b", jaml.getString("a"));
+    }
 
     @Test
-    public void testJaml() throws JamlSyntaxException {
-        JamlFile jaml = JamlFile.parse(testJaml);
-
-        assertTrue(true);
+    public void testMaps() throws JamlSyntaxException {
+        JamlFile jaml = JamlFile.parse("map = {\n"
+                                       + "key = value\n"
+                                       + "}");
+        assertEquals("value", jaml.getMap("map").getMap().get("key"));
+        assertEquals("value", jaml.getString("map", "key"));
     }
 }

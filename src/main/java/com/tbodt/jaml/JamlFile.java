@@ -38,7 +38,7 @@ public final class JamlFile {
      * @param path the path
      * @return the {@link JamlObject} at the given path
      */
-    public JamlObject get(String... path) {
+    public JamlObject getObject(String... path) {
         JamlObject obj = root;
         for (String pathComponent : path)
             if (obj instanceof JamlMap) {
@@ -51,15 +51,25 @@ public final class JamlFile {
     }
 
     /**
-     * Return the {@link JamlString} at the given path.
+     * Return the {@link JamlFile} at the given path.
      *
      * @param path the path
-     * @return the {@link JamlString} at the given path
+     * @return the {@link JamlFile} at the given path
      */
-    public JamlString getString(String... path) {
-        JamlObject obj = get(path);
+    public JamlFile getFile(String... path) {
+        return new JamlFile(getObject(path));
+    }
+
+    /**
+     * Return the {@code String} at the given path.
+     *
+     * @param path the path
+     * @return the {@code String} at the given path
+     */
+    public String getString(String... path) {
+        JamlObject obj = getObject(path);
         if (obj instanceof JamlString)
-            return (JamlString) obj;
+            return ((JamlString) obj).getValue();
         else
             throw new IllegalArgumentException("getString called, but path leads to map");
     }
@@ -71,8 +81,8 @@ public final class JamlFile {
      * @return the {@link JamlMap} at the given path
      */
     public JamlMap getMap(String... path) {
-        JamlObject obj = get(path);
-        if (obj instanceof JamlString)
+        JamlObject obj = getObject(path);
+        if (obj instanceof JamlMap)
             return (JamlMap) obj;
         else
             throw new IllegalArgumentException("getMap called, but path leads to string");
