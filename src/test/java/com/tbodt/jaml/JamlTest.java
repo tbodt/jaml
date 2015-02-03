@@ -36,7 +36,7 @@ public class JamlTest {
         JamlFile jaml = JamlFile.parse("map = {\n"
                                        + "key = value\n"
                                        + "}");
-        assertEquals("value", jaml.getMap("map").getMap().get("key"));
+        assertEquals("value", ((JamlString) jaml.getMap("map").getMap().get("key")).getValue());
         assertEquals("value", jaml.getString("map", "key"));
     }
 }
